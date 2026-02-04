@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applications - Sherlock Homes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #0f172a;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg-light: #f8fafc;
+            --text-gray: #64748b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-light);
+            color: var(--secondary);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .logo svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--secondary);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .nav-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Page Header */
+        .page-header {
+            padding: 7rem 2rem 2rem;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .page-header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .page-header p {
+            color: var(--text-gray);
+            margin-top: 0.25rem;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: white;
+        }
+
+        .search-input {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            width: 250px;
+        }
+
+        .search-input:focus,
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .stat-card-label {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .stat-card-value.approved { color: var(--accent); }
+        .stat-card-value.pending { color: var(--warning); }
+        .stat-card-value.review { color: var(--primary); }
+        .stat-card-value.declined { color: var(--danger); }
+
+        /* Applications Table */
+        .applications-table {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr 0.8fr 1fr;
+            padding: 1rem 1.5rem;
+            background: var(--bg-light);
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr 0.8fr 1fr;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .table-row:hover {
+            background: var(--bg-light);
+        }
+
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .app-id-cell {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .borrower-cell {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .borrower-name {
+            font-weight: 500;
+        }
+
+        .loan-type {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            width: fit-content;
+        }
+
+        .status-approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-review {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-declined {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.4rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-view {
+            background: var(--bg-light);
+            color: var(--secondary);
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-view:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-report {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-report:hover {
+            background: #1e293b;
+        }
+
+        /* Risk Score */
+        .risk-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .risk-badge {
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .risk-low {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .risk-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .risk-high {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .pagination-info {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        .pagination-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .page-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .page-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .page-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--secondary);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        footer p {
+            opacity: 0.7;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .modal-header h3 {
+            font-size: 1.25rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-gray);
+        }
+
+        .report-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .report-section h4 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-gray);
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-row .form-group {
+            margin-bottom: 0;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .doc-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .doc-btn {
+            background: var(--bg-light);
+            border: 1px dashed #cbd5e1;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--secondary);
+        }
+
+        .doc-btn:hover {
+            border-color: var(--primary);
+            background: #eff6ff;
+            color: var(--primary);
+        }
+
+        .uploaded-docs {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .doc-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        .doc-item span {
+            color: #166534;
+        }
+
+        .doc-remove {
+            background: none;
+            border: none;
+            color: #dc2626;
+            cursor: pointer;
+            font-size: 1.1rem;
+            line-height: 1;
+            padding: 0 0.25rem;
+        }
+
+        .doc-remove:hover {
+            color: #991b1b;
+        }
+
+        .modal-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .modal-section:last-of-type {
+            border-bottom: none;
+            margin-bottom: 1rem;
+            padding-bottom: 0;
+        }
+
+        .modal-section h4 {
+            margin-bottom: 1rem;
+            color: var(--text-gray);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .report-item {
+            background: var(--bg-light);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .report-item-label {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+            margin-bottom: 0.25rem;
+        }
+
+        .report-item-value {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .ai-notes {
+            background: var(--secondary);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .ai-notes h5 {
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .ai-notes ul {
+            margin-left: 1.25rem;
+            opacity: 0.9;
+        }
+
+        .ai-notes li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .table-header,
+            .table-row {
+                grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr;
+            }
+
+            .table-header > *:nth-child(6),
+            .table-row > *:nth-child(6) {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .page-header-content {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .filters {
+                flex-wrap: wrap;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .report-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <a href="underwriting-ai.html" class="logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            Sherlock Homes
+        </a>
+        <ul class="nav-links">
+            <li><a href="underwriting-ai.html">Dashboard</a></li>
+            <li><a href="applications.html" class="active">Applications</a></li>
+            <li><a href="#settings">Settings</a></li>
+        </ul>
+        <button class="nav-btn" onclick="openApplicationModal()">+ New Loan Application</button>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-content">
+            <div>
+                <h1>Loan Applications</h1>
+                <p>Manage and review all submitted loan applications</p>
+            </div>
+            <div class="filters">
+                <input type="text" class="search-input" placeholder="Search by name or ID...">
+                <select class="filter-select">
+                    <option value="">All Statuses</option>
+                    <option value="approved">Approved</option>
+                    <option value="pending">Pending</option>
+                    <option value="review">Under Review</option>
+                    <option value="declined">Declined</option>
+                </select>
+                <select class="filter-select">
+                    <option value="">All Loan Types</option>
+                    <option value="30-conv">30-Year Fixed Conventional</option>
+                    <option value="15-conv">15-Year Fixed Conventional</option>
+                    <option value="fha">FHA</option>
+                    <option value="va">VA</option>
+                    <option value="arm">ARM</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Stats Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-card-label">Approved</div>
+                <div class="stat-card-value approved">24</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-label">Pending Documents</div>
+                <div class="stat-card-value pending">8</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-label">Under Review</div>
+                <div class="stat-card-value review">12</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-label">Declined</div>
+                <div class="stat-card-value declined">3</div>
+            </div>
+        </div>
+
+        <!-- Applications Table -->
+        <div class="applications-table">
+            <div class="table-header">
+                <div>Application ID</div>
+                <div>Borrower</div>
+                <div>Loan Amount</div>
+                <div>LTV</div>
+                <div>Status</div>
+                <div>Risk</div>
+                <div>Actions</div>
+            </div>
+
+            <div class="table-row">
+                <div class="app-id-cell">LN-2024-08472</div>
+                <div class="borrower-cell">
+                    <span class="borrower-name">James Morrison</span>
+                    <span class="loan-type">30-Year Fixed Conventional</span>
+                </div>
+                <div>$425,000</div>
+                <div>80.2%</div>
+                <div><span class="status-badge status-approved">Approved</span></div>
+                <div class="risk-cell"><span class="risk-badge risk-low">18</span></div>
+                <div class="actions-cell">
+                    <button class="action-btn btn-view" onclick="viewApplication('LN-2024-08472')">View</button>
+                    <button class="action-btn btn-report" onclick="viewReport('LN-2024-08472')">Report</button>
+                </div>
+            </div>
+
+            <div class="table-row">
+                <div class="app-id-cell">LN-2024-08471</div>
+                <div class="borrower-cell">
+                    <span class="borrower-name">Sarah Chen</span>
+                    <span class="loan-type">15-Year Fixed Conventional</span>
+                </div>
+                <div>$315,000</div>
+                <div>75.0%</div>
+                <div><span class="status-badge status-pending">Pending Docs</span></div>
+                <div class="risk-cell"><span class="risk-badge risk-low">32</span></div>
+                <div class="actions-cell">
+                    <button class="action-btn btn-view" onclick="viewApplication('LN-2024-08471')">View</button>
+                    <button class="action-btn btn-report" onclick="viewReport('LN-2024-08471')">Report</button>
+                </div>
+            </div>
+
+            <div class="table-row">
+                <div class="app-id-cell">LN-2024-08470</div>
+                <div class="borrower-cell">
+                    <span class="borrower-name">Michael Torres</span>
+                    <span class="loan-type">30-Year Fixed FHA</span>
+                </div>
+                <div>$285,000</div>
+                <div>95.3%</div>
+                <div><span class="status-badge status-review">Under Review</span></div>
+                <div class="risk-cell"><span class="risk-badge risk-medium">58</span></div>
+                <div class="actions-cell">
+                    <button class="action-btn btn-view" onclick="viewApplication('LN-2024-08470')">View</button>
+                    <button class="action-btn btn-report" onclick="viewReport('LN-2024-08470')">Report</button>
+                </div>
+            </div>
+
+            <div class="table-row">
+                <div class="app-id-cell">LN-2024-08469</div>
+                <div class="borrower-cell">
+                    <span class="borrower-name">Robert Blake</span>
+                    <span class="loan-type">30-Year Fixed Conventional</span>
+                </div>
+                <div>$520,000</div>
+                <div>95.4%</div>
+                <div><span class="status-badge status-declined">Declined</span></div>
+                <div class="risk-cell"><span class="risk-badge risk-high">84</span></div>
+                <div class="actions-cell">
+                    <button class="action-btn btn-view" onclick="viewApplication('LN-2024-08469')">View</button>
+                    <button class="action-btn btn-report" onclick="viewReport('LN-2024-08469')">Report</button>
+                </div>
+            </div>
+
+            <div class="table-row">
+                <div class="app-id-cell">LN-2024-08468</div>
+                <div class="borrower-cell">
+                    <span class="borrower-name">Emily Watson</span>
+                    <span class="loan-type">30-Year Fixed VA</span>
+                </div>
+                <div>$380,000</div>
+                <div>100%</div>
+                <div><span class="status-badge status-approved">Approved</span></div>
+                <div class="risk-cell"><span class="risk-badge risk-low">22</span></div>
+                <div class="actions-cell">
+                    <button class="action-btn btn-view" onclick="viewApplication('LN-2024-08468')">View</button>
+                    <button class="action-btn btn-report" onclick="viewReport('LN-2024-08468')">Report</button>
+                </div>
+            </div>
+
+            <div class="table-row">
+                <div class="app-id-cell">LN-2024-08467</div>
+                <div class="borrower-cell">
+                    <span class="borrower-name">David Kim</span>
+                    <span class="loan-type">7/1 ARM</span>
+                </div>
+                <div>$675,000</div>
+                <div>85.0%</div>
+                <div><span class="status-badge status-review">Under Review</span></div>
+                <div class="risk-cell"><span class="risk-badge risk-medium">48</span></div>
+                <div class="actions-cell">
+                    <button class="action-btn btn-view" onclick="viewApplication('LN-2024-08467')">View</button>
+                    <button class="action-btn btn-report" onclick="viewReport('LN-2024-08467')">Report</button>
+                </div>
+            </div>
+
+            <div class="table-row">
+                <div class="app-id-cell">LN-2024-08466</div>
+                <div class="borrower-cell">
+                    <span class="borrower-name">Lisa Johnson</span>
+                    <span class="loan-type">30-Year Fixed Conventional</span>
+                </div>
+                <div>$290,000</div>
+                <div>78.5%</div>
+                <div><span class="status-badge status-approved">Approved</span></div>
+                <div class="risk-cell"><span class="risk-badge risk-low">15</span></div>
+                <div class="actions-cell">
+                    <button class="action-btn btn-view" onclick="viewApplication('LN-2024-08466')">View</button>
+                    <button class="action-btn btn-report" onclick="viewReport('LN-2024-08466')">Report</button>
+                </div>
+            </div>
+
+            <div class="table-row">
+                <div class="app-id-cell">LN-2024-08465</div>
+                <div class="borrower-cell">
+                    <span class="borrower-name">Marcus Williams</span>
+                    <span class="loan-type">30-Year Fixed FHA</span>
+                </div>
+                <div>$245,000</div>
+                <div>96.5%</div>
+                <div><span class="status-badge status-pending">Pending Docs</span></div>
+                <div class="risk-cell"><span class="risk-badge risk-medium">52</span></div>
+                <div class="actions-cell">
+                    <button class="action-btn btn-view" onclick="viewApplication('LN-2024-08465')">View</button>
+                    <button class="action-btn btn-report" onclick="viewReport('LN-2024-08465')">Report</button>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <div class="pagination-info">Showing 1-8 of 47 applications</div>
+                <div class="pagination-btns">
+                    <button class="page-btn">&laquo; Prev</button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <button class="page-btn">4</button>
+                    <button class="page-btn">Next &raquo;</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Report Modal -->
+    <div class="modal-overlay" id="reportModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>AI Underwriting Report - <span id="reportAppId"></span></h3>
+                <button class="modal-close" onclick="closeReportModal()">&times;</button>
+            </div>
+
+            <div class="report-section">
+                <h4>Loan Summary</h4>
+                <div class="report-grid">
+                    <div class="report-item">
+                        <div class="report-item-label">Loan Amount</div>
+                        <div class="report-item-value" id="reportLoanAmount">$425,000</div>
+                    </div>
+                    <div class="report-item">
+                        <div class="report-item-label">Property Value</div>
+                        <div class="report-item-value" id="reportPropertyValue">$530,000</div>
+                    </div>
+                    <div class="report-item">
+                        <div class="report-item-label">LTV Ratio</div>
+                        <div class="report-item-value" id="reportLTV">80.2%</div>
+                    </div>
+                    <div class="report-item">
+                        <div class="report-item-label">Interest Rate</div>
+                        <div class="report-item-value" id="reportRate">6.875%</div>
+                    </div>
+                    <div class="report-item">
+                        <div class="report-item-label">Monthly Payment</div>
+                        <div class="report-item-value" id="reportPayment">$2,789</div>
+                    </div>
+                    <div class="report-item">
+                        <div class="report-item-label">Loan Term</div>
+                        <div class="report-item-value" id="reportTerm">30 Years</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-section">
+                <h4>Borrower Analysis</h4>
+                <div class="report-grid">
+                    <div class="report-item">
+                        <div class="report-item-label">Credit Score</div>
+                        <div class="report-item-value" id="reportCredit">742</div>
+                    </div>
+                    <div class="report-item">
+                        <div class="report-item-label">DTI Ratio</div>
+                        <div class="report-item-value" id="reportDTI">32%</div>
+                    </div>
+                    <div class="report-item">
+                        <div class="report-item-label">Employment</div>
+                        <div class="report-item-value" id="reportEmployment">Verified (4 yrs)</div>
+                    </div>
+                    <div class="report-item">
+                        <div class="report-item-label">Annual Income</div>
+                        <div class="report-item-value" id="reportIncome">$124,000</div>
+                    </div>
+                    <div class="report-item">
+                        <div class="report-item-label">Assets Verified</div>
+                        <div class="report-item-value" id="reportAssets">Yes</div>
+                    </div>
+                    <div class="report-item">
+                        <div class="report-item-label">Risk Score</div>
+                        <div class="report-item-value" id="reportRisk">18 (Low)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-section">
+                <h4>AI Analysis Notes</h4>
+                <div class="ai-notes">
+                    <h5>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                        Sherlock Homes AI Assessment
+                    </h5>
+                    <ul id="reportNotes">
+                        <li>Strong credit profile with consistent payment history over 8+ years</li>
+                        <li>DTI ratio well within acceptable limits for conventional loan</li>
+                        <li>Stable employment with same employer; income growth trend positive</li>
+                        <li>Property appraisal aligns with comparable sales in area</li>
+                        <li>No red flags detected in background verification</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="report-section" style="text-align: center; margin-top: 2rem;">
+                <button class="action-btn btn-report" style="padding: 0.75rem 2rem; font-size: 1rem;" onclick="window.print()">Print Report</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Application Modal -->
+    <div class="modal-overlay" id="applicationModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>New Loan Application</h3>
+                <button class="modal-close" onclick="closeApplicationModal()">&times;</button>
+            </div>
+            <form onsubmit="submitApplication(event)">
+                <div class="modal-section">
+                    <h4>Borrower Information</h4>
+                    <div class="form-group">
+                        <label>Full Legal Name *</label>
+                        <input type="text" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>SSN *</label>
+                            <input type="text" placeholder="XXX-XX-XXXX" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Date of Birth *</label>
+                            <input type="date" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone *</label>
+                            <input type="tel" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h4>Employment & Income</h4>
+                    <div class="form-group">
+                        <label>Employer Name *</label>
+                        <input type="text" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Annual Income *</label>
+                            <input type="text" placeholder="$85,000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Years Employed *</label>
+                            <input type="number" min="0" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h4>Loan Details</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Loan Amount *</label>
+                            <input type="text" placeholder="$350,000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Loan Type *</label>
+                            <select required>
+                                <option value="">Select...</option>
+                                <option>30-Year Fixed Conventional</option>
+                                <option>15-Year Fixed Conventional</option>
+                                <option>30-Year Fixed FHA</option>
+                                <option>30-Year Fixed VA</option>
+                                <option>7/1 ARM</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Loan Purpose *</label>
+                        <select required>
+                            <option value="">Select...</option>
+                            <option>Purchase</option>
+                            <option>Refinance - Rate/Term</option>
+                            <option>Refinance - Cash Out</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h4>Online Presence</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>LinkedIn Profile</label>
+                            <input type="url" placeholder="https://linkedin.com/in/...">
+                        </div>
+                        <div class="form-group">
+                            <label>Facebook Profile</label>
+                            <input type="url" placeholder="https://facebook.com/...">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Instagram Handle</label>
+                            <input type="text" placeholder="@username">
+                        </div>
+                        <div class="form-group">
+                            <label>Twitter/X Handle</label>
+                            <input type="text" placeholder="@username">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Personal Website</label>
+                        <input type="url" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label>Other Social Links</label>
+                        <textarea rows="2" placeholder="Any other relevant online profiles or links..."></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h4>Tax Documents</h4>
+                    <div class="doc-buttons">
+                        <button type="button" class="doc-btn" onclick="addDocument('W-2')">+ W-2</button>
+                        <button type="button" class="doc-btn" onclick="addDocument('1099')">+ 1099</button>
+                        <button type="button" class="doc-btn" onclick="addDocument('Tax Return')">+ Tax Return</button>
+                        <button type="button" class="doc-btn" onclick="addDocument('Pay Stub')">+ Pay Stub</button>
+                        <button type="button" class="doc-btn" onclick="addDocument('Bank Statement')">+ Bank Statement</button>
+                        <button type="button" class="doc-btn" onclick="addDocument('Other')">+ Other</button>
+                    </div>
+                    <div id="uploadedDocs" class="uploaded-docs"></div>
+                </div>
+
+                <div class="modal-section">
+                    <h4>Other Relevant Information</h4>
+                    <div class="form-group">
+                        <label>Additional Notes</label>
+                        <textarea rows="4" placeholder="Any other information that may be relevant to this application (e.g., co-borrower details, unusual income sources, planned renovations, etc.)"></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h4>Property Information</h4>
+                    <div class="form-group">
+                        <label>Property Address *</label>
+                        <input type="text" placeholder="123 Main St, City, State ZIP" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Estimated Value *</label>
+                            <input type="text" placeholder="$425,000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Property Type *</label>
+                            <select required>
+                                <option value="">Select...</option>
+                                <option>Single Family Detached</option>
+                                <option>Townhouse</option>
+                                <option>Condo</option>
+                                <option>PUD</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Occupancy *</label>
+                        <select required>
+                            <option value="">Select...</option>
+                            <option>Primary Residence</option>
+                            <option>Second Home</option>
+                            <option>Investment Property</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    Submit for AI Underwriting
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Sherlock Homes. Single Family Home Loan Underwriting Platform.</p>
+    </footer>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api/v1';
+
+        function viewApplication(appId) {
+            alert(`Viewing full application details for ${appId}\n\nThis would open the complete application with all borrower information, documents, and history.`);
+        }
+
+        async function viewReport(appId) {
+            document.getElementById('reportAppId').textContent = appId;
+
+            // Try to fetch from API
+            try {
+                const response = await fetch(`${API_BASE}/loan-applications/${appId}`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.risk_assessment) {
+                        displayReport(result.risk_assessment, result);
+                    }
+                }
+            } catch (error) {
+                console.log('Could not fetch from API, showing static data');
+            }
+
+            document.getElementById('reportModal').classList.add('active');
+        }
+
+        function displayReport(report, caseData) {
+            // Loan Summary
+            document.getElementById('reportLoanAmount').textContent = formatCurrency(caseData.loan_amount || 0);
+            document.getElementById('reportPropertyValue').textContent = formatCurrency(caseData.property_value || 0);
+            document.getElementById('reportLTV').textContent = (report.ltv || caseData.ltv || 0).toFixed(1) + '%';
+
+            // Borrower Analysis
+            document.getElementById('reportCredit').textContent = report.credit_score || caseData.credit_score || 'N/A';
+            document.getElementById('reportDTI').textContent = (report.dti || caseData.dti || 0).toFixed(1) + '%';
+            document.getElementById('reportRisk').textContent = `${report.risk_score} (${report.risk_category})`;
+
+            // AI Notes
+            const notesEl = document.getElementById('reportNotes');
+            if (report.ai_analysis && report.ai_analysis !== 'AI analysis unavailable - Keywords AI client not configured.') {
+                notesEl.innerHTML = `<li>${report.ai_analysis.replace(/\n\n/g, '</li><li>')}</li>`;
+            }
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function closeReportModal() {
+            document.getElementById('reportModal').classList.remove('active');
+        }
+
+        function openApplicationModal() {
+            document.getElementById('applicationModal').classList.add('active');
+        }
+
+        function closeApplicationModal() {
+            document.getElementById('applicationModal').classList.remove('active');
+        }
+
+        function submitApplication(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerHTML = '<div class="loading"></div> Processing...';
+
+            setTimeout(() => {
+                btn.innerHTML = 'Submit for AI Underwriting';
+                closeApplicationModal();
+                alert('Loan application submitted successfully!\n\nAI underwriting analysis in progress.\nYou will receive a decision within 24 hours.');
+            }, 2000);
+        }
+
+        let docCounter = 0;
+        function addDocument(type) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.pdf,.jpg,.jpeg,.png,.doc,.docx';
+            input.onchange = function(e) {
+                if (e.target.files.length > 0) {
+                    const fileName = e.target.files[0].name;
+                    const container = document.getElementById('uploadedDocs');
+                    const docId = 'doc-' + (++docCounter);
+                    const docItem = document.createElement('div');
+                    docItem.className = 'doc-item';
+                    docItem.id = docId;
+                    docItem.innerHTML = `<span>${type}: ${fileName}</span><button type="button" class="doc-remove" onclick="removeDocument('${docId}')">&times;</button>`;
+                    container.appendChild(docItem);
+                }
+            };
+            input.click();
+        }
+
+        function removeDocument(docId) {
+            document.getElementById(docId).remove();
+        }
+
+        // Close modal on outside click
+        document.getElementById('reportModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeReportModal();
+            }
+        });
+
+        document.getElementById('applicationModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeApplicationModal();
+            }
+        });
+
+        // Escape key closes modals
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeReportModal();
+                closeApplicationModal();
+            }
+        });
+
+        // Check API health on load
+        window.addEventListener('load', async function() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                if (data.status === 'healthy') {
+                    console.log('Sherlock Homes API connected - Version:', data.version);
+                }
+            } catch (error) {
+                console.warn('API server not running. Start with: cd backend && python -m uvicorn app.main:app --reload --port 8000');
+            }
+        });
+    </script>
+</body>
+</html>

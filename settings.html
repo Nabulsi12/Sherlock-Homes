@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Sherlock Homes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #0f172a;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg-light: #f8fafc;
+            --text-gray: #64748b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-light);
+            color: var(--secondary);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .logo svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--secondary);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .nav-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Settings Section */
+        .settings-section {
+            padding: 6rem 2rem 4rem;
+            background: var(--bg-light);
+            min-height: 100vh;
+        }
+
+        .settings-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .settings-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .settings-title svg {
+            color: var(--primary);
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .settings-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .settings-card-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1rem 1.5rem;
+        }
+
+        .settings-card-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .settings-card-body {
+            padding: 1.5rem;
+        }
+
+        .settings-field {
+            margin-bottom: 1.25rem;
+        }
+
+        .settings-field:last-child {
+            margin-bottom: 0;
+        }
+
+        .settings-field label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .settings-field small {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-gray);
+            margin-top: 0.25rem;
+        }
+
+        .settings-input,
+        .settings-select {
+            width: 100%;
+            padding: 0.625rem 0.875rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            color: var(--secondary);
+            background: white;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .settings-input:focus,
+        .settings-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .settings-toggle-field {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .settings-toggle-field:last-child {
+            border-bottom: none;
+        }
+
+        .settings-toggle-field label:first-child {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--secondary);
+            margin-bottom: 0;
+        }
+
+        .settings-toggle {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .settings-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .settings-toggle input:checked + .toggle-slider {
+            background-color: var(--accent);
+        }
+
+        .settings-toggle input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        .settings-toggle input:disabled + .toggle-slider {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .settings-range-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .settings-range {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #e2e8f0;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .settings-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .settings-range::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .settings-range-value {
+            min-width: 40px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .settings-api-key {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .settings-api-key .settings-input {
+            flex: 1;
+            font-family: monospace;
+        }
+
+        .settings-btn-small {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid #e2e8f0;
+            background: white;
+            color: var(--secondary);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .settings-btn-small:hover {
+            background: #f8fafc;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .settings-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .settings-btn-primary {
+            padding: 0.75rem 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .settings-btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .settings-btn-secondary {
+            padding: 0.75rem 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            background: white;
+            color: var(--secondary);
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .settings-btn-secondary:hover {
+            background: #f8fafc;
+            border-color: var(--text-gray);
+        }
+
+        @media (max-width: 768px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .settings-api-key {
+                flex-wrap: wrap;
+            }
+
+            .settings-api-key .settings-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <a href="underwriting-ai.html" class="logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            Sherlock Homes
+        </a>
+        <ul class="nav-links">
+            <li><a href="underwriting-ai.html">Dashboard</a></li>
+            <li><a href="applications.html">Applications</a></li>
+            <li><a href="settings.html" class="active">Settings</a></li>
+        </ul>
+        <a href="underwriting-ai.html" class="nav-btn">+ New Loan Application</a>
+    </nav>
+
+    <!-- Settings Section -->
+    <section class="settings-section">
+        <div class="settings-container">
+            <h2 class="settings-title">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+                </svg>
+                Settings
+            </h2>
+
+            <div class="settings-grid">
+                <!-- Organization Settings -->
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <h3>Organization</h3>
+                    </div>
+                    <div class="settings-card-body">
+                        <div class="settings-field">
+                            <label>Company Name</label>
+                            <input type="text" value="Acme Mortgage Services" class="settings-input">
+                        </div>
+                        <div class="settings-field">
+                            <label>NMLS ID</label>
+                            <input type="text" value="123456" class="settings-input">
+                        </div>
+                        <div class="settings-field">
+                            <label>Primary Contact Email</label>
+                            <input type="email" value="underwriting@acmemortgage.com" class="settings-input">
+                        </div>
+                        <div class="settings-field">
+                            <label>Time Zone</label>
+                            <select class="settings-select">
+                                <option>Eastern Time (ET)</option>
+                                <option selected>Pacific Time (PT)</option>
+                                <option>Central Time (CT)</option>
+                                <option>Mountain Time (MT)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Model Settings -->
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <h3>AI Risk Assessment</h3>
+                    </div>
+                    <div class="settings-card-body">
+                        <div class="settings-field">
+                            <label>Risk Tolerance Level</label>
+                            <select class="settings-select">
+                                <option>Conservative (Low Risk Only)</option>
+                                <option selected>Moderate (Standard)</option>
+                                <option>Aggressive (Higher Risk Tolerance)</option>
+                            </select>
+                        </div>
+                        <div class="settings-field">
+                            <label>Auto-Approve Threshold</label>
+                            <div class="settings-range-container">
+                                <input type="range" min="0" max="50" value="30" class="settings-range" id="approveThreshold">
+                                <span class="settings-range-value" id="approveValue">30</span>
+                            </div>
+                            <small>Applications with risk score below this will be auto-approved</small>
+                        </div>
+                        <div class="settings-field">
+                            <label>Auto-Decline Threshold</label>
+                            <div class="settings-range-container">
+                                <input type="range" min="50" max="100" value="75" class="settings-range" id="declineThreshold">
+                                <span class="settings-range-value" id="declineValue">75</span>
+                            </div>
+                            <small>Applications with risk score above this will be auto-declined</small>
+                        </div>
+                        <div class="settings-field">
+                            <label>Fourth Factor (Social Media) Weight</label>
+                            <div class="settings-range-container">
+                                <input type="range" min="0" max="30" value="15" class="settings-range" id="fourthFactor">
+                                <span class="settings-range-value" id="fourthValue">15%</span>
+                            </div>
+                        </div>
+                        <div class="settings-toggle-field">
+                            <label>Enable AI Explanations</label>
+                            <label class="settings-toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Compliance Settings -->
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <h3>Compliance & Guidelines</h3>
+                    </div>
+                    <div class="settings-card-body">
+                        <div class="settings-toggle-field">
+                            <label>Fannie Mae Guidelines</label>
+                            <label class="settings-toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-toggle-field">
+                            <label>Freddie Mac Guidelines</label>
+                            <label class="settings-toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-toggle-field">
+                            <label>FHA Guidelines</label>
+                            <label class="settings-toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-toggle-field">
+                            <label>VA Loan Guidelines</label>
+                            <label class="settings-toggle">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-toggle-field">
+                            <label>USDA Rural Development</label>
+                            <label class="settings-toggle">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-field">
+                            <label>Maximum DTI Ratio (%)</label>
+                            <input type="number" value="43" min="30" max="55" class="settings-input">
+                        </div>
+                        <div class="settings-field">
+                            <label>Maximum LTV Ratio (%)</label>
+                            <input type="number" value="97" min="80" max="100" class="settings-input">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notification Settings -->
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <h3>Notifications</h3>
+                    </div>
+                    <div class="settings-card-body">
+                        <div class="settings-toggle-field">
+                            <label>Email on New Application</label>
+                            <label class="settings-toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-toggle-field">
+                            <label>Email on High-Risk Flag</label>
+                            <label class="settings-toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-toggle-field">
+                            <label>Email on Compliance Violation</label>
+                            <label class="settings-toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-toggle-field">
+                            <label>Daily Summary Report</label>
+                            <label class="settings-toggle">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-toggle-field">
+                            <label>Weekly Analytics Digest</label>
+                            <label class="settings-toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-field">
+                            <label>Notification Email</label>
+                            <input type="email" value="alerts@acmemortgage.com" class="settings-input">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API & Integrations -->
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <h3>API & Integrations</h3>
+                    </div>
+                    <div class="settings-card-body">
+                        <div class="settings-field">
+                            <label>API Key</label>
+                            <div class="settings-api-key">
+                                <input type="password" value="sk-xxxx-xxxx-xxxx-xxxx" class="settings-input" readonly id="apiKey">
+                                <button type="button" class="settings-btn-small" onclick="toggleApiKey()">Reveal</button>
+                                <button type="button" class="settings-btn-small">Regenerate</button>
+                            </div>
+                        </div>
+                        <div class="settings-toggle-field">
+                            <label>Equifax Credit Pull</label>
+                            <label class="settings-toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-toggle-field">
+                            <label>Experian Credit Pull</label>
+                            <label class="settings-toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-toggle-field">
+                            <label>TransUnion Credit Pull</label>
+                            <label class="settings-toggle">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-toggle-field">
+                            <label>Plaid Income Verification</label>
+                            <label class="settings-toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-toggle-field">
+                            <label>DocuSign Integration</label>
+                            <label class="settings-toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data & Privacy -->
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <h3>Data & Privacy</h3>
+                    </div>
+                    <div class="settings-card-body">
+                        <div class="settings-field">
+                            <label>Data Retention Period</label>
+                            <select class="settings-select">
+                                <option>1 Year</option>
+                                <option>3 Years</option>
+                                <option selected>7 Years (Recommended)</option>
+                                <option>10 Years</option>
+                                <option>Indefinite</option>
+                            </select>
+                        </div>
+                        <div class="settings-toggle-field">
+                            <label>Encrypt Data at Rest</label>
+                            <label class="settings-toggle">
+                                <input type="checkbox" checked disabled>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-toggle-field">
+                            <label>Audit Logging</label>
+                            <label class="settings-toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-toggle-field">
+                            <label>GDPR Compliance Mode</label>
+                            <label class="settings-toggle">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-toggle-field">
+                            <label>CCPA Compliance Mode</label>
+                            <label class="settings-toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-field">
+                            <label>Backup Frequency</label>
+                            <select class="settings-select">
+                                <option>Hourly</option>
+                                <option selected>Daily</option>
+                                <option>Weekly</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-actions">
+                <button type="button" class="settings-btn-secondary" onclick="resetDefaults()">Reset to Defaults</button>
+                <button type="button" class="settings-btn-primary" onclick="saveSettings()">Save Changes</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Range slider updates
+        document.getElementById('approveThreshold').addEventListener('input', function() {
+            document.getElementById('approveValue').textContent = this.value;
+        });
+
+        document.getElementById('declineThreshold').addEventListener('input', function() {
+            document.getElementById('declineValue').textContent = this.value;
+        });
+
+        document.getElementById('fourthFactor').addEventListener('input', function() {
+            document.getElementById('fourthValue').textContent = this.value + '%';
+        });
+
+        // API Key toggle
+        function toggleApiKey() {
+            const input = document.getElementById('apiKey');
+            const btn = event.target;
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = 'Hide';
+            } else {
+                input.type = 'password';
+                btn.textContent = 'Reveal';
+            }
+        }
+
+        // Save settings (placeholder)
+        function saveSettings() {
+            alert('Settings saved successfully!');
+        }
+
+        // Reset to defaults (placeholder)
+        function resetDefaults() {
+            if (confirm('Are you sure you want to reset all settings to defaults?')) {
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
